@@ -1,0 +1,47 @@
+FROM php:8.1.0alpha3-zts-buster
+
+# OS
+RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime
+
+RUN apt-get update
+RUN apt-get install -y ssh git
+
+
+# PHP
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+RUN echo 'memory_limit = -1' >> /usr/local/etc/php/conf.d/docker-php-memlimit.ini
+
+# Zip and unzip for composer install
+RUN apt-get install -y zip unzip libzip-dev
+RUN docker-php-ext-install zip
+
+# GD
+RUN apt-get install -y zlib1g-dev libpng-dev libjpeg-dev libfreetype6-dev
+RUN docker-php-ext-install gd
+
+# GRCP
+RUN apt-get update
+RUN apt-get -y --no-install-recommends install g++ zlib1g-dev
+RUN pecl install grpc
+RUN docker-php-ext-enable grpc
+
+# MySQL
+RUN docker-php-ext-install pdo_mysql
+
+# PostgreSQL
+RUN apt-get update
+RUN apt-get install -y libpq-dev
+RUN docker-php-ext-install pgsql pdo_pgsql
+
+# xdebug
+RUN apt-get update &&\
+    apt-get install --no-install-recommends --assume-yes --quiet ca-certificates curl git &&\
+    rm -rf /var/lib/apt/lists/*
+
+RUN pecl install xdebug && docker-php-ext-enable xdebug
+
+
+# Redis
+# https://stackoverflow.com/questions/31369867/how-to-install-php-redis-extension-using-the-official-php-docker-image-approach
+RUN pecl install redis && docker-php-ext-enable redis
+
