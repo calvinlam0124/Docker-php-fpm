@@ -33,6 +33,9 @@ RUN apt-get update
 RUN apt-get install -y libpq-dev
 RUN docker-php-ext-install pgsql pdo_pgsql
 
+# Sockets
+docker-php-ext-install bcmath sockets
+
 # xdebug
 RUN apt-get update &&\
     apt-get install --no-install-recommends --assume-yes --quiet ca-certificates curl git &&\
