@@ -34,7 +34,7 @@ RUN apt-get install -y libpq-dev
 RUN docker-php-ext-install pgsql pdo_pgsql
 
 # Sockets
-docker-php-ext-install bcmath sockets
+RUN docker-php-ext-install bcmath sockets
 
 # xdebug
 RUN apt-get update &&\
